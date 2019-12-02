@@ -15,3 +15,11 @@ Attention, il faut que la personne soit ciblée au préalabe
 Utilisation : Cible une personne
 Conséquence : La personne ciblée sera traiter dans les fonctions
 La plupart des fonctions necessites une cible au préalable.
+
+### Lire les informations
+Utilisation : donne moi les informations
+Conséquence : Affiche les informations éditée (ne prend pas en compte les colones vides)
+
+### Editer les informations
+Utilisation : édite les informations
+Conséquence : Va modifier le dictionnaire python et le retransformer en json

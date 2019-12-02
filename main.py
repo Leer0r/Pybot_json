@@ -1,7 +1,7 @@
 #!/usr/bin/python3.7
 # -*- coding: utf-8 -*-
 
-import os,json,shutil
+import os,json,shutil,copy
 
 class JSON_MASTER():
     def __init__(self):
@@ -91,7 +91,10 @@ class JSON_MASTER():
         else :
             self.current_name = tmp_current_name
             self.current_familyname = tmp_current_familyname
-        self.current_path = "data/"+self.current_familyname + "_" + self.current_name 
+        self.current_path = "data/"+self.current_familyname + "_" + self.current_name
+        with open(self.current_path+"/data.json") as fichier:
+            self.current_json = json.load(fichier)
+            print("Les donnée ont bien été chargée \n")
         print("Le répertoire courrant est maintenant sur la personne nommée " + self.current_familyname + " " + self.current_name)
         
     #########################################################################################
@@ -101,14 +104,25 @@ class JSON_MASTER():
         if not self.verifier_current():
             print("Veuiller cibler une personne avant cette action")
             return
-        with open(self.current_path+"/data.json") as fichier:
-            self.current_json = json.load(fichier)
-            print("Les donnée ont bien été chargée \n")
         for caract in self.current_json:
-            if self.current_json[caract] != "":
+            if full and self.current_json[caract] != "":
                 print(caract + " -> " + self.current_json[caract])
         print()
         
+
+    ##########################################################################################
+    #################################Editer les donnée de la cible############################
+
+    def editer_donnee(self):
+        if not self.verifier_current():
+            print("Veuiller cibler une personne avant cette action")
+            return
+        json_initial = {}
+        json_initial = copy.deepcopy(self.current_json)
+        print("La fonction n'est pas encore finie")
+
+
+
 
     ##########################################################################################
 
@@ -159,6 +173,8 @@ class MAIN(JSON_MASTER):
             self.cible()
         elif str_decision == "donne moi les informations":
             self.lire_donnee()
+        elif str_decision == "édite les informations":
+            self.editer_donnee()
         else:
             print("Désolé, je ne connais pas cette fonction....")
 
