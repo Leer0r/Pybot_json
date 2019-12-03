@@ -92,7 +92,7 @@ class JSON_MASTER():
             self.current_name = tmp_current_name
             self.current_familyname = tmp_current_familyname
         self.current_path = "data/"+self.current_familyname + "_" + self.current_name
-        with open(self.current_path+"/data.json") as fichier:
+        with open(self.current_path+"/data.json","r") as fichier:
             self.current_json = json.load(fichier)
             print("Les donnée ont bien été chargée \n")
         print("Le répertoire courrant est maintenant sur la personne nommée " + self.current_familyname + " " + self.current_name)
@@ -105,7 +105,7 @@ class JSON_MASTER():
             print("Veuiller cibler une personne avant cette action")
             return
         for caract in self.current_json:
-            if full and self.current_json[caract] != "":
+            if self.current_json[caract] != "":
                 print(caract + " -> " + self.current_json[caract])
         print()
         
@@ -119,12 +119,58 @@ class JSON_MASTER():
             return
         json_initial = {}
         json_initial = copy.deepcopy(self.current_json)
-        print("La fonction n'est pas encore finie")
+        stop2 = False
+        while not stop2:
+            os.system("clear")
+            print(json.dumps(self.current_json,sort_keys=True, indent=4))
+            self.print_current("Edition des informations")
+            self.print_current("________________________")
+            choix = int(self.input_current("Hub de choix : 0 pour quitter, 1 pour editer une information déjà existante, 2 pour en créer une autre : "))
+            if choix == 0:
+                print("Arret de l'édition, retour au menu principal")
+                stop2 = True   
+            elif choix == 1:
+                self.print_current("Edition d'une information")
+                tab_cle = [cle for cle in self.current_json]
+                self.afficher_option_dict()
+                choix2 = self.input_current("Quel est l'information a éditer ? : ")
+                if choix2 not in tab_cle:
+                    self.print_current("Désolé, je ne trouve pas cette caractéristique")
+                else:
+                    Nouvelle_caract = self.input_current("Quelle est la nouvelle caractéristique a attibuer ? : ")
+                    if self.current_json[choix2] != "":
+                        choix3 = self.input_current("Attention, la caractéristique " + self.current_json[choix2] + " va etre remplacer par " + Nouvelle_caract + " appuiller sur y pour valider : ")
+                        if choix3 == "y":
+                            self.current_json[choix2] = Nouvelle_caract
+                            self.print_current("La caractéristique a été changée")
+                        else:
+                            self.print_current("Abandon")
+                    self.current_json[choix2] = Nouvelle_caract
+                    self.print_current("La caractéristique a été changée")
 
-
+            elif choix == 2:
+                pass
+            else :
+                self.print_current("Désolé, la commande est inconnue")
+        
+        if json_initial != self.current_json:
+            self.print_current("Des modifications ont été effectuée : ")
+            self.print_current("Fichier initial : ")
+            print(json.dumps(json_initial,sort_keys=True, indent=4))
+            print()
+            self.print_current("Fichier après modification : ")
+            print(json.dumps(self.current_json,sort_keys=True, indent=4))
+            print()
+            choix = self.input_current("Voulez vous sauvegarder ces modifications ? (y pour valider) : ")
+            if choix == "y":
+                self.print_current("Les nouvelles donnée vont etre écrite dans le fichier...")
+                with open(self.current_path + "/data.json","w") as fichier:
+                    json.dump(self.current_json,fichier,indent=4)
+                print("Le fichier a été mis a jours")
 
 
     ##########################################################################################
+
 
     def verifier_current(self):
         if self.current_name == "" or self.current_familyname == "" or self.current_path == "":
@@ -154,6 +200,11 @@ class JSON_MASTER():
         for i in os.listdir("data/"):
             if i != "template.json" and nom in i:
                 print(i,end="    ")
+        print()
+    
+    def afficher_option_dict(self):
+        for cle in self.current_json:
+            print(cle,end = "   ")
         print()
 
 
