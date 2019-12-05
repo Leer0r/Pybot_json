@@ -1,2 +1,3 @@
 data/*
 !data/template.json
+test.py

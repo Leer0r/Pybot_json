@@ -5,10 +5,11 @@ import os,json,shutil,copy
 
 class JSON_MASTER():
     def __init__(self):
-        self.current_path = ""
+        self.current_json_path = ""
         self.current_json = ""
         self.current_name = ""
         self.current_familyname = ""
+        self.current_path = ""
 
     ###########################NOUVELLE PERSONNE###########################################
 
@@ -26,30 +27,30 @@ class JSON_MASTER():
             self.current_name = input("Quel est le prénom de la personne ? : ").lower()
         if os.path.exists("data/" + self.current_familyname + "_" + self.current_name): #Si la personne a déjà un dossier
             print("Erreur, cette personne est déjà inscrite dans la base de donée")
-            return 
-        self.current_path = "data/"+self.current_familyname + "_" + self.current_name
-        os.mkdir(self.current_path)
+            return
+        self.current_json_path = "data/"+self.current_familyname + "_" + self.current_name
+        os.mkdir(self.current_json_path)
 
         with open("data/template.json","r") as template: #on ouvre le template et on le stoque sous forme de dictionnaire
             self.current_json = json.load(template)
             self.current_json["nom"] = self.current_familyname
             self.current_json["prenom"] = self.current_name
 
-        with open(self.current_path+"/data.json","w") as current_file: #on crée un nouveau fichier data pour la personne et on met les info basiques dedans
+        with open(self.current_json_path+"/data.json","w") as current_file: #on crée un nouveau fichier data pour la personne et on met les info basiques dedans
             current_file.write(json.dumps(self.current_json,sort_keys=True, indent=4))
-        
+
         print("Le dossier à été crée")
         if not booleen:
             choix = input("Voulez vous continuez a éditer ce dossier ?(y pour confirmer) : ")
             if choix != "y":
                 self.current_name = temp_current_name
                 self.current_familyname = tmp_current_familyname
-        else : 
-            self.current_path = ""
+        else :
+            self.current_json_path = ""
 
     #########################################################################################
     #################################SUPPRIMER PERSONNE######################################
-    
+
     def supprimer_personne(self):
         if not self.verifier_current():
             print("Veuiller cibler une personne avant cette action")
@@ -57,16 +58,16 @@ class JSON_MASTER():
         if not os.path.exists("data/" + self.current_familyname + "_" + self.current_name): #Si la personne a déjà été supprimée
             print("Erreur,la personne n'existe pas ou a déja été éffacée")
             return 2
-        
+
         choix = input("Cette action va supprimer toutes les donnée de la personne suivante : " + self.current_familyname + " " + self.current_name + ", tappez y pour confirmer : ")
         if choix != "y":
             self.print_current("Action annulée")
             return
-        shutil.rmtree(self.current_path)
+        shutil.rmtree(self.current_json_path)
         self.current_familyname = ""
         self.current_name = ""
-        self.current_path = ""
-    
+        self.current_json_path = ""
+
     #########################################################################################
     ###############################Fixer la cible############################################
 
@@ -91,15 +92,15 @@ class JSON_MASTER():
         else :
             self.current_name = tmp_current_name
             self.current_familyname = tmp_current_familyname
-        self.current_path = "data/"+self.current_familyname + "_" + self.current_name
-        with open(self.current_path+"/data.json","r") as fichier:
+        self.current_json_path = "data/"+self.current_familyname + "_" + self.current_name
+        with open(self.current_json_path+"/data.json","r") as fichier:
             self.current_json = json.load(fichier)
             print("Les donnée ont bien été chargée \n")
         print("Le répertoire courrant est maintenant sur la personne nommée " + self.current_familyname + " " + self.current_name)
-        
+
     #########################################################################################
     ################################Lire les donnée de la cible##############################
-    
+
     def lire_donnee(self):
         if not self.verifier_current():
             print("Veuiller cibler une personne avant cette action")
@@ -108,7 +109,7 @@ class JSON_MASTER():
             if self.current_json[caract] != "":
                 print(caract + " -> " + self.current_json[caract])
         print()
-        
+
 
     ##########################################################################################
     #################################Editer les donnée de la cible############################
@@ -128,7 +129,7 @@ class JSON_MASTER():
             choix = int(self.input_current("Hub de choix : 0 pour quitter, 1 pour editer une information déjà existante, 2 pour en créer une autre : "))
             if choix == 0:
                 print("Arret de l'édition, retour au menu principal")
-                stop2 = True   
+                stop2 = True
             elif choix == 1:
                 self.print_current("Edition d'une information")
                 tab_cle = [cle for cle in self.current_json]
@@ -152,7 +153,7 @@ class JSON_MASTER():
                 pass
             else :
                 self.print_current("Désolé, la commande est inconnue")
-        
+
         if json_initial != self.current_json:
             self.print_current("Des modifications ont été effectuée : ")
             self.print_current("Fichier initial : ")
@@ -164,7 +165,7 @@ class JSON_MASTER():
             choix = self.input_current("Voulez vous sauvegarder ces modifications ? (y pour valider) : ")
             if choix == "y":
                 self.print_current("Les nouvelles donnée vont etre écrite dans le fichier...")
-                with open(self.current_path + "/data.json","w") as fichier:
+                with open(self.current_json_path + "/data.json","w") as fichier:
                     json.dump(self.current_json,fichier,indent=4)
                 print("Le fichier a été mis a jours")
 
@@ -173,23 +174,31 @@ class JSON_MASTER():
 
 
     def verifier_current(self):
-        if self.current_name == "" or self.current_familyname == "" or self.current_path == "":
+        if self.current_name == "" or self.current_familyname == "" or self.current_json_path == "":
             return False
         return True
 
     def print_current(self,txt):
-        if self.verifier_current():
-            print("[" + self.current_name + " " + self.current_familyname + "]" + " " + txt)
+        if self.verifier_path():
+            print("[" + self.current_name + " " + self.current_familyname + "] "+ "(" + self.current_path + ") " + txt)
         else:
-            print("[Vide]" + " " + txt)
-    
+            if self.verifier_current():
+                print("[" + self.current_name + " " + self.current_familyname + "] "+ txt)
+            else:
+                print("[Vide] " + txt)
+
     def input_current(self,txt):
         if self.verifier_current():
-            choix = input("[" + self.current_name + " " + self.current_familyname + "]" + " " + txt)
+            choix = input("[" + self.current_name + " " + self.current_familyname + "] " + txt)
         else:
-            choix = input("[Vide]" + " " + txt)
+            choix = input("[Vide] " + txt)
         return choix
-    
+
+    def verifier_path(self):
+        if self.current_path != "":
+            return True
+        return False
+
     def afficher_dossier_data_general(self):
         for i in os.listdir("data/"):
             if i != "template.json":
@@ -201,7 +210,7 @@ class JSON_MASTER():
             if i != "template.json" and nom in i:
                 print(i,end="    ")
         print()
-    
+
     def afficher_option_dict(self):
         for cle in self.current_json:
             print(cle,end = "   ")
