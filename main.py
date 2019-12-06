@@ -254,6 +254,40 @@ class MAIN(JSON_MASTER):
         if not os.path.exists("data"):
             os.mkdir("data")
 
+    def lire_fichier(f):
+        with open(f,"r") as fichier:
+            fichier_str = fichier.read()
+        return fichier_str
+
+    def split_str(txt):
+        dict_option = {}
+        compt = 1
+        for i in range(len(txt)):
+            if txt[i] == "@":
+                param = ""
+                arg = ""
+                i += 1
+                while txt[i] != " " and txt[i] != "\n":
+                    param += txt[i]
+                    i += 1
+                if param == "exemple_debut":
+                    param = "exemple" + str(compt)
+                    compt += 1
+                    while txt[i] != "@":
+                        arg += txt[i]
+                        i+= 1
+                elif param == "exemple_fin":
+                    continue
+                else :
+                    i += 3
+                    while txt[i] != "\n":
+                        arg += txt[i]
+                        i+= 1
+                    if "|" in arg:
+                        arg = arg.split("|")
+                dict_option[param] = arg
+        return dict_option
+
     def decision(self,str_decision):
         if str_decision == "ajoute une nouvelle personne":
             self.nouvelle_personne(False)
