@@ -1,6 +1,6 @@
 #!/usr/bin/python3.7
 # -*- coding: utf-8 -*-
-
+from __future__ import unicode_literals
 import os,json,shutil,copy
 
 class JSON_MASTER():
@@ -123,10 +123,15 @@ class JSON_MASTER():
         stop2 = False
         while not stop2:
             os.system("clear")
-            print(json.dumps(self.current_json,sort_keys=True, indent=4))
+            self.afficher_donnee()
             self.print_current("Edition des informations")
             self.print_current("________________________")
-            choix = int(self.input_current("Hub de choix : 0 pour quitter, 1 pour editer une information déjà existante, 2 pour en créer une autre : "))
+            choix = self.input_current("Hub de choix : 0 pour quitter, 1 pour editer une information déjà existante, 2 pour en créer une autre, 3 pour supprimer une information : ")
+            try:
+                choix = int(choix)
+            except:
+                print("Ce n'est pas un option valide")
+                return
             if choix == 0:
                 print("Arret de l'édition, retour au menu principal")
                 stop2 = True
@@ -148,9 +153,23 @@ class JSON_MASTER():
                             self.print_current("Abandon")
                     self.current_json[choix2] = Nouvelle_caract
                     self.print_current("La caractéristique a été changée")
-
             elif choix == 2:
-                pass
+                self.print_current("Creation de l'information")
+                choix = self.input_current("Quel est le nom de la catégorie a créer ? : ")
+                choix2 =self.input_current("Que voulez vous mettre dans cette catégorie ? : ")
+                self.current_json.update({choix:choix2})
+            elif choix == 3:
+                self.print_current("Suppression de l'information")
+                tab_cle = [cle for cle in self.current_json]
+                self.afficher_option_dict()
+                choix2 = self.input_current("Quel est l'information à supprimer ? : ")
+                if choix2 not in tab_cle:
+                    self.print_current("Désolé, je ne trouve pas cette caractéristique")
+                else:
+                    del self.current_json[choix2]
+                    self.print_current("L'élément à été supprimé")
+                
+
             else :
                 self.print_current("Désolé, la commande est inconnue")
 
@@ -165,13 +184,21 @@ class JSON_MASTER():
             choix = self.input_current("Voulez vous sauvegarder ces modifications ? (y pour valider) : ")
             if choix == "y":
                 self.print_current("Les nouvelles donnée vont etre écrite dans le fichier...")
-                with open(self.current_json_path + "/data.json","w") as fichier:
+                with open(self.current_json_path + "/data.json","w",encoding="utf-8") as fichier:
                     json.dump(self.current_json,fichier,indent=4)
                 print("Le fichier a été mis a jours")
+                
 
 
     ##########################################################################################
 
+    def afficher_donnee(self):
+        if not self.verifier_current():
+            print("Veuiller cibler une personne avant cette action")
+            return
+        for caract in self.current_json:
+            print(caract + " -> " + self.current_json[caract])
+        print()
 
     def verifier_current(self):
         if self.current_name == "" or self.current_familyname == "" or self.current_json_path == "":
@@ -216,6 +243,9 @@ class JSON_MASTER():
             print(cle,end = "   ")
         print()
 
+    def aide(self):
+        self.print_current("Bienvenu sur la rubrique d'aide. Ici est listé toutes les fonctionnalitée avec des exemples et des conseils d'utilisation")
+
 
 class MAIN(JSON_MASTER):
     def __init__(self):
@@ -235,11 +265,14 @@ class MAIN(JSON_MASTER):
             self.lire_donnee()
         elif str_decision == "édite les informations":
             self.editer_donnee()
+        elif str_decision == "h":
+            pass
         else:
             print("Désolé, je ne connais pas cette fonction....")
 
     def mainfonction(self):
         while(not self.arret):
+            print("[h pour avoir accès a la rubrique d'aide]")
             choix = self.input_current("Que voulez vous faire ? : ")
             choix = choix.lower()
             if choix == "stop":
