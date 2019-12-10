@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import os,json,shutil,copy
-
 class JSON_MASTER():
     def __init__(self):
         self.current_json_path = ""
@@ -74,6 +73,16 @@ class JSON_MASTER():
     def cible(self):
         if self.verifier_current():
             print("Le repertoire courrant va etre changer")
+        if len(os.listdir("data/")) == 2:
+            liste = os.listdir("data/")
+            liste.remove("template.json")
+            print("Il n'y a qu'un seul répertoire, celui de %s, ciblage immediat" %(liste[0]))
+            personne = liste[0].split("_")
+            self.current_familyname = personne[0]
+            self.current_name = personne[1]
+            self.current_json_path = "data/"+self.current_familyname + "_" + self.current_name
+            print("Le répertoire courrant est maintenant sur la personne nommée " + self.current_familyname + " " + self.current_name)
+            return
         print("Liste des dossiers : ",end = "")
         self.afficher_dossier_data_general()
         tmp_current_familyname = input("Quel est le nom de la personne a définir comme reperoire courrant ? : ").lower()
@@ -107,7 +116,7 @@ class JSON_MASTER():
             return
         for caract in self.current_json:
             if self.current_json[caract] != "":
-                print(caract + " -> " + self.current_json[caract])
+                print(caract + " -> " + str(self.current_json[caract]))
         print()
 
 
@@ -126,7 +135,7 @@ class JSON_MASTER():
             self.afficher_donnee()
             self.print_current("Edition des informations")
             self.print_current("________________________")
-            choix = self.input_current("Hub de choix : 0 pour quitter, 1 pour editer une information déjà existante, 2 pour en créer une autre, 3 pour supprimer une information : ")
+            choix = self.input_current("Hub de choix : 0 pour quitter, 1 pour editer une information déjà existante, 2 pour en créer une autre, 3 pour supprimer une information, 4 pour ajouter une annécdote : ")
             try:
                 choix = int(choix)
             except:
@@ -168,8 +177,16 @@ class JSON_MASTER():
                 else:
                     del self.current_json[choix2]
                     self.print_current("L'élément à été supprimé")
-                
-
+            elif choix == 4:
+                self.print_current("Ajout d'une annécdote")
+                path = "anecdote"
+                self.current_json[path]["nb"] += 1
+                annecdote = self.input_current("Quel est l'anecdote à ajouter ? : \n")
+                nom = self.input_current("\n\n Voulez vous lui donner un nom particulier ? Par défault ça sera %s : " %("anecdote_" + str(self.current_json[path]["nb"])))
+                if nom == "":
+                    nom = "anecdote" + str(self.current_json[path]["nb"])
+                self.current_json[path][nom] = annecdote
+                self.print_current("L'annecdote a été sauvegardée localement")
             else :
                 self.print_current("Désolé, la commande est inconnue")
 
@@ -187,7 +204,6 @@ class JSON_MASTER():
                 with open(self.current_json_path + "/data.json","w",encoding="utf-8") as fichier:
                     json.dump(self.current_json,fichier,indent=4)
                 print("Le fichier a été mis a jours")
-                
 
 
     ##########################################################################################
@@ -197,7 +213,7 @@ class JSON_MASTER():
             print("Veuiller cibler une personne avant cette action")
             return
         for caract in self.current_json:
-            print(caract + " -> " + self.current_json[caract])
+            print(caract + " -> " + str(self.current_json[caract]))
         print()
 
     def verifier_current(self):
@@ -266,7 +282,7 @@ class MAIN(JSON_MASTER):
         elif str_decision == "édite les informations":
             self.editer_donnee()
         elif str_decision == "h":
-            pass
+            self.print_current("La fonction est en cours de développement...")
         else:
             print("Désolé, je ne connais pas cette fonction....")
 

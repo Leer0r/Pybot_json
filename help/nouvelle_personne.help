@@ -5,9 +5,9 @@
 @exemple_debut
 >>> [Vide] Que voulez vous faire ? :
 <<< ajoute une nouvelle personne
->>> Quel est le nom de la personne ? : 
+>>> Quel est le nom de la personne ? :
 <<< Russo
->>> Quel est le prénom de la personne ? : 
+>>> Quel est le prénom de la personne ? :
 <<< Lilian
 >>> Le dossier à été crée
 >>> Voulez vous continuez a éditer ce dossier ?(y pour confirmer) :

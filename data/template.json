@@ -3,5 +3,8 @@
     "prenom":"",
     "age":"",
     "interet":"",
-    "autre":""
+    "autre":"",
+    "anecdote":{
+        "nb":0
+    }
 }
