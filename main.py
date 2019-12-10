@@ -207,6 +207,16 @@ class JSON_MASTER():
 
 
     ##########################################################################################
+    ################################SUPPRIMER LES DONNEE######################################
+
+    def suppr_all(self):
+        choix = self.input_current("Attention, vous allez supprimer toutes les données locales, tappez y pour confirmer : ")
+        if choix == "y":
+            for fichier in os.listdir("data/"):
+                if fichier != "template.json":
+                    shutil.rmtree("data/" + fichier)
+            print("Les fichier on été supprimé")
+    #########################################################################################
 
     def afficher_donnee(self):
         if not self.verifier_current():
@@ -270,6 +280,57 @@ class MAIN(JSON_MASTER):
         if not os.path.exists("data"):
             os.mkdir("data")
 
+    def lire_fichier(self,f):
+        with open(f,"r") as fichier:
+            fichier_str = fichier.read()
+        return fichier_str
+
+    def split_str(self,txt):
+        dict_option = {}
+        compt = 1
+        for i in range(len(txt)):
+            if txt[i] == "@":
+                param = ""
+                arg = ""
+                i += 1
+                while txt[i] != " " and txt[i] != "\n":
+                    param += txt[i]
+                    i += 1
+                if param == "exemple_debut":
+                    param = "exemple" + str(compt)
+                    compt += 1
+                    while txt[i] != "@":
+                        arg += txt[i]
+                        i+= 1
+                elif param == "exemple_fin":
+                    continue
+                else :
+                    i += 3
+                    while txt[i] != "\n":
+                        arg += txt[i]
+                        i+= 1
+                    if "|" in arg:
+                        arg = arg.split("|")
+                dict_option[param] = arg
+        return dict_option
+    
+    def aide(self):
+        print("Voici la liste des fonctions qui possède un fichier aide : ")
+        liste_choix = []
+        for fichier in os.listdir("help/"):
+            print(fichier.replace(".help",""))
+            liste_choix.append(fichier.replace(".help",""))
+        choix = self.input_current("Quel est la fonction qui nécéssite de l'aide ? [q pour quitter] : ")
+        while choix not in liste_choix and choix != "q":
+            print("Désolé, cette fonction n'existe pas...")
+            choix = self.input_current("Quel est la fonction qui nécéssite de l'aide ? [q pour quitter] : ")
+        if choix == "q":
+            return
+        txt_aide = self.lire_fichier("help/" + choix + ".help")
+        dict_option = self.split_str(txt_aide)
+        for key in dict_option:
+            print(key + " -> " + str(dict_option[key]) + "\n")
+
     def decision(self,str_decision):
         if str_decision == "ajoute une nouvelle personne":
             self.nouvelle_personne(False)
@@ -282,9 +343,12 @@ class MAIN(JSON_MASTER):
         elif str_decision == "édite les informations":
             self.editer_donnee()
         elif str_decision == "h":
-            self.print_current("La fonction est en cours de développement...")
+            self.aide()
+        elif str_decision == "supprime toutes les données":
+            self.suppr_all()
         else:
             print("Désolé, je ne connais pas cette fonction....")
+
 
     def mainfonction(self):
         while(not self.arret):
