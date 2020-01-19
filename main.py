@@ -338,7 +338,8 @@ class MAIN(JSON_MASTER):
                         arg += txt[i]
                         i += 1
                     dict_option[param] = arg
-                    while txt[i] != " " and txt[i] != "\n":
+                    param = ""
+                    while i < len(txt) and txt[i] != " " and txt[i] != "\n":
                         param += txt[i]
                         i += 1
                     if "@end:" + save_param not in param:
