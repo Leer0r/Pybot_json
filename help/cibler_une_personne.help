@@ -1,0 +1,26 @@
+@name = cibler une personne
+@appel = 3
+@utilisation = Cette fonction permet de cibler une personne déjà enregistée dans la base de donnée. Si il n'y a qu'une seule personne dans d'enregistré, la fonction la ciblera automatiquement
+@begin:exemple1
+(Il n'y a qu'une personne enregistée dans la base de donnée)
+>>> [Vide] Que voulez vous faire ? :
+<<< 2
+>>> Il n'y a qu'un seul répertoire, celui de [nom]_[prenom], ciblage immediat
+Le répertoire courrant est maintenant sur la personne nommée [nom]_[prenom]
+>>> [[nom]_[prenom]] Que voulez vous faire ? :
+@end:exemple1
+@begin:exemple2
+(il y a plusieurs personnes dans la base de donnée)
+>>> [Vide] Que voulez vous faire ? :
+<<< 2
+>>>Liste des dossiers : [[nom1]_[prenom1]]    [[nom2]_[prenom2]]
+Quel est le nom de la personne a définir comme reperoire courrant ? :
+<<< [nom2]
+>>> Liste des choix : [[nom2]_[prenom2]]
+Quel est le prenom de la personne a définir comme reperoire courrant ? :
+<<< [prenom2]
+>>> Les donnée ont bien été chargée
+>>> [nom2]_[prenom2]] Que voulez vous faire ? :
+@end:exemple2
+@note : le ciblage d'une personne est l'une des premières fonctions a faire
+@note2 : Si il n'y a qu'une seule personne a posséder le nom de famille, il sera ciblé automatiquement

@@ -1,10 +1,9 @@
 @name = nouvelle_personne
-@arguments_requis = bool booleen
-@appel = ajoute une nouvelle personne | crée une nouvelle personne
+@appel = 1
 @utilisation = Cette fonction permet de créer un nouveau répertoire dans le dossier data sous la forme : <nom_prenom> avec une copie du fichier template.json, le nom et le prenom y sont ajouté. La fonction vous demandera ensuite si vous souhaitez modifier la personne crée. Cette dernière sera ciblée en cas de reponse positive
 @begin:exemple
 >>> [Vide] Que voulez vous faire ? :
-<<< ajoute une nouvelle personne
+<<< 1
 >>> Quel est le nom de la personne ? :
 <<< Russo
 >>> Quel est le prénom de la personne ? :

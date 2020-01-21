@@ -7,6 +7,7 @@ import shutil
 import copy
 from sty import fg, bg, ef, rs, RgbFg
 
+
 class JSON_MASTER():
     def __init__(self):
         self.current_json_path = ""
@@ -15,26 +16,25 @@ class JSON_MASTER():
         self.current_familyname = ""
         self.current_path = ""
         self.phase = "alpha"
-        self.version = "0.0.4"
+        self.version = "0.0.5"
         self.dict_fonction = {
-            1:"ajoute une nouvelle personne",
-            2:"supprime cette personne",
-            3:"cible une personne",
-            4:"donne moi les informations",
-            5:"édite les informations",
-            6:"h",
-            7:"supprime toutes les données",
-            "stop":"stop"
+            1: "ajoute une nouvelle personne",
+            2: "supprime cette personne",
+            3: "cible une personne",
+            4: "donne moi les informations",
+            5: "édite les informations",
+            6: "supprime toutes les données",
+            "h": "h",
+            "stop": "stop"
         }
         self.dict_explication = {
-            1:"Ajouter une nouvelle personne dans la base de donnée",
-            2:"Supprimer une personne de la base de donnée",
-            3:"Cibler une personne dans la base de donnée (la crée si elle n'existe pas)",
-            4:"Donne les informations stocké de la personne précédement ciblée",
-            5:"Edite les informations stocké de la personne précédement ciblée",
-            6:"Aide sur le programme",
-            7:"Supprime toutes les données stockées",
-            "stop":"Arrete le programme"
+            1: "Ajouter une nouvelle personne dans la base de donnée",
+            2: "Supprimer une personne de la base de donnée",
+            3: "Cibler une personne dans la base de donnée (la crée si elle n'existe pas)",
+            4: "Donne les informations stocké de la personne précédement ciblée",
+            5: "Edite les informations stocké de la personne précédement ciblée",
+            6: "Supprime toutes les données stockées",
+            "stop": "Arrete le programme"
         }
 
     ###########################NOUVELLE PERSONNE###########################################
@@ -126,22 +126,30 @@ class JSON_MASTER():
         tmp_current_familyname = input(
             "Quel est le nom de la personne a définir comme reperoire courrant ? : ").lower()
         print("Liste des choix : ", end="")
-        self.afficher_dossier_data_specif(tmp_current_familyname)
-        tmp_current_name = input(
-            "Quel est le prenom de la personne a définir comme reperoire courrant ? : ").lower()
-        if not os.path.exists("data/" + tmp_current_familyname + "_" + tmp_current_name):
-            choix = self.input_current(
-                "La personne n'a pas de dossier, voulez vous en créer un ? : (y pour valider)")
-            if choix == "y":
+        if len(self.return_dossier_data_specif(tmp_current_familyname)) == 1:
+            fullname = self.return_dossier_data_specif(
+                tmp_current_familyname)[0]
+            self.current_familyname = tmp_current_familyname
+            print("Il n'un a qu'une seule personne dans la base de donnée avec le nom {} ({}), cette personne a donc été ciblée automatiquement".format(
+                self.current_familyname, fullname))
+            self.current_name = self.juste_prenom(fullname)
+        else:
+            self.afficher_dossier_data_specif(tmp_current_familyname)
+            tmp_current_name = input(
+                "Quel est le prenom de la personne a définir comme reperoire courrant ? : ").lower()
+            if not os.path.exists("data/" + tmp_current_familyname + "_" + tmp_current_name):
+                choix = self.input_current(
+                    "La personne n'a pas de dossier, voulez vous en créer un ? : (y pour valider)")
+                if choix == "y":
+                    self.current_name = tmp_current_name
+                    self.current_familyname = tmp_current_familyname
+                    self.nouvelle_personne(True)
+                else:
+                    print("Abandon")
+                    return
+            else:
                 self.current_name = tmp_current_name
                 self.current_familyname = tmp_current_familyname
-                self.nouvelle_personne(True)
-            else:
-                print("Abandon")
-                return
-        else:
-            self.current_name = tmp_current_name
-            self.current_familyname = tmp_current_familyname
         self.current_json_path = "data/"+self.current_familyname + "_" + self.current_name
         with open(self.current_json_path+"/data.json", "r") as fichier:
             self.current_json = json.load(fichier)
@@ -297,26 +305,24 @@ class JSON_MASTER():
             else:
                 print(fg.li_cyan + "[Vide] " + fg.rs + txt)
 
-    def print_error(self,txt):
+    def print_error(self, txt):
         print("\n" + fg.red + "Erreur : " + txt + fg.rs)
-
 
     def input_current(self, txt):
         if self.verifier_current():
-            choix = input("[" + fg.red +  self.current_name + " " +
+            choix = input("[" + fg.red + self.current_name + " " +
                           self.current_familyname + fg.rs + "] " + txt)
         else:
             choix = input("[Vide] " + txt)
         return choix
-    
-    def input_current_int(self,txt):
+
+    def input_current_int(self, txt):
         if self.verifier_current():
-            choix = int(input("[" + fg.red +  self.current_name + " " +
-                          self.current_familyname + fg.rs + "] " + txt))
+            choix = int(input("[" + fg.red + self.current_name + " " +
+                              self.current_familyname + fg.rs + "] " + txt))
         else:
             choix = int(input("[Vide] " + txt))
         return choix
-
 
     def verifier_path(self):
         if self.current_path != "":
@@ -335,10 +341,30 @@ class JSON_MASTER():
                 print(i, end="    ")
         print()
 
+    def return_dossier_data_specif(self, nom):
+        data_return = []
+        for i in os.listdir("data/"):
+            if i != "template.json" and nom in i:
+                data_return.append(i)
+        return data_return
+
     def afficher_option_dict(self):
         for cle in self.current_json:
             print(cle, end="   ")
         print()
+
+    def juste_prenom(self, txt):
+        ecrire = False
+        prenom = ""
+        for i in txt:
+            if ecrire:
+                prenom += i
+            elif i == "_":
+                ecrire = True
+        return prenom
+
+    def wait(self):
+        input("Appuyez sur la touche ENTREE pour continuer...")
 
 
 class MAIN(JSON_MASTER):
@@ -393,16 +419,17 @@ class MAIN(JSON_MASTER):
 
     def aide(self):
         print("Voici comment utiliser les fonctions : ")
-    
-    def print_dict(self,dico):
-        for key in dico :
+
+    def print_dict(self, dico):
+        for key in dico:
             print(str(key) + " --> " + dico[key])
 
     def aide_plus(self):
+        os.system("clear")
         print("Voici la liste des fonctions qui possède un fichier aide : ")
         liste_choix = []
         for fichier in os.listdir("help/"):
-            print(fichier.replace(".help", ""))
+            print(fg.da_green + fichier.replace(".help", "") + fg.rs)
             liste_choix.append(fichier.replace(".help", ""))
         choix = self.input_current(
             "Quel est la fonction qui nécéssite de l'aide ? [q pour quitter] : ")
@@ -416,7 +443,7 @@ class MAIN(JSON_MASTER):
         dict_option = self.split_str(txt_aide)
         for key in dict_option:
             print(key + " -> " + str(dict_option[key]) + "\n")
-        input("Appuyez sur la touche ENTREE pour continuer...")
+        self.wait()
 
     def decision(self, str_decision):
         if str_decision == "ajoute une nouvelle personne":
@@ -429,8 +456,6 @@ class MAIN(JSON_MASTER):
             self.lire_donnee()
         elif str_decision == "édite les informations":
             self.editer_donnee()
-        elif str_decision == "h":
-            self.aide_plus()
         elif str_decision == "supprime toutes les données":
             self.suppr_all()
         else:
@@ -438,12 +463,15 @@ class MAIN(JSON_MASTER):
 
     def mainfonction(self):
         while(not self.arret):
-            print("\n[" + fg.da_green + "h pour avoir accès a la rubrique d'aide" + fg.rs + "]")
-            self.print_dict(self.dict_fonction)
+            print("\n[" + fg.da_green +
+                  "h pour avoir accès a la rubrique d'aide" + fg.rs + "]")
+            self.print_dict(self.dict_explication)
             try:
                 choix = self.input_current("Que voulez vous faire ? : ")
                 if choix == "stop":
                     self.arret = True
+                elif choix == "h":
+                    self.aide_plus()
                 else:
                     choix = self.dict_fonction[int(choix)]
                     self.decision(choix)
@@ -451,7 +479,7 @@ class MAIN(JSON_MASTER):
                 self.print_error("ce n'est pas un indice valide de fonction")
             except ValueError:
                 self.print_error("le nombre entré n'est pas valide")
-            except :
+            except:
                 self.print_error("Abandon. Retour au menu")
         print(ef.b + "Au revoir" + rs.bold_dim)
 
