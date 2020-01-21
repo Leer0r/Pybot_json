@@ -16,6 +16,26 @@ class JSON_MASTER():
         self.current_path = ""
         self.phase = "alpha"
         self.version = "0.0.3"
+        self.dict_fonction = {
+            1:"ajoute une nouvelle personne",
+            2:"supprime cette personne",
+            3:"cible une personne",
+            4:"donne moi les informations",
+            5:"édite les informations",
+            6:"h",
+            7:"supprime toutes les données",
+            "stop":"stop"
+        }
+        self.dict_explication = {
+            1:"Ajouter une nouvelle personne dans la base de donnée",
+            2:"Supprimer une personne de la base de donnée",
+            3:"Cibler une personne dans la base de donnée (la crée si elle n'existe pas)",
+            4:"Donne les informations stocké de la personne précédement ciblée",
+            5:"Edite les informations stocké de la personne précédement ciblée",
+            6:"Aide sur le programme",
+            7:"Supprime toutes les données stockées",
+            "stop":"Arrete le programme"
+        }
 
     ###########################NOUVELLE PERSONNE###########################################
 
@@ -277,6 +297,10 @@ class JSON_MASTER():
             else:
                 print(fg.li_cyan + "[Vide] " + fg.rs + txt)
 
+    def print_error(self,txt):
+        print("\n" + fg.red + "Erreur : " + txt + fg.rs)
+
+
     def input_current(self, txt):
         if self.verifier_current():
             choix = input("[" + fg.red +  self.current_name + " " +
@@ -284,6 +308,15 @@ class JSON_MASTER():
         else:
             choix = input("[Vide] " + txt)
         return choix
+    
+    def input_current_int(self,txt):
+        if self.verifier_current():
+            choix = int(input("[" + fg.red +  self.current_name + " " +
+                          self.current_familyname + fg.rs + "] " + txt))
+        else:
+            choix = int(input("[Vide] " + txt))
+        return choix
+
 
     def verifier_path(self):
         if self.current_path != "":
@@ -360,6 +393,10 @@ class MAIN(JSON_MASTER):
 
     def aide(self):
         print("Voici comment utiliser les fonctions : ")
+    
+    def print_dict(self,dico):
+        for key in dico :
+            print(str(key) + " --> " + dico[key])
 
     def aide_plus(self):
         print("Voici la liste des fonctions qui possède un fichier aide : ")
@@ -379,6 +416,7 @@ class MAIN(JSON_MASTER):
         dict_option = self.split_str(txt_aide)
         for key in dict_option:
             print(key + " -> " + str(dict_option[key]) + "\n")
+        input("Appuyez sur la touche ENTREE pour continuer...")
 
     def decision(self, str_decision):
         if str_decision == "ajoute une nouvelle personne":
@@ -400,14 +438,22 @@ class MAIN(JSON_MASTER):
 
     def mainfonction(self):
         while(not self.arret):
-            print("\n[h pour avoir accès a la rubrique d'aide]")
-            choix = self.input_current("Que voulez vous faire ? : ")
-            choix = choix.lower()
-            if choix == "stop":
-                self.arret = True
-            else:
-                self.decision(choix)
-        print("Au revoir")
+            print("\n[" + fg.da_green + "h pour avoir accès a la rubrique d'aide" + fg.rs + "]")
+            self.print_dict(self.dict_fonction)
+            try:
+                choix = self.input_current("Que voulez vous faire ? : ")
+                if choix == "stop":
+                    self.arret = True
+                else:
+                    choix = self.dict_fonction[int(choix)]
+                    self.decision(choix)
+            except KeyError:
+                self.print_error("ce n'est pas un indice valide de fonction")
+            except ValueError:
+                self.print_error("le nombre entré n'est pas valide")
+            except :
+                self.print_error("Abandon. Retour au menu")
+        print(ef.b + "Au revoir" + rs.bold_dim)
 
 ########################################################################################################################################
 
