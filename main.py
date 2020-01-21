@@ -130,7 +130,7 @@ class JSON_MASTER():
             fullname = self.return_dossier_data_specif(
                 tmp_current_familyname)[0]
             self.current_familyname = tmp_current_familyname
-            print("Il n'un a qu'une seule personne dans la base de donnée avec le nom {} ({}), cette personne a donc été ciblée automatiquement".format(
+            self.print_info("Il n'un a qu'une seule personne dans la base de donnée avec le nom {} ({}), cette personne a donc été ciblée automatiquement".format(
                 self.current_familyname, fullname))
             self.current_name = self.juste_prenom(fullname)
         else:
@@ -161,6 +161,7 @@ class JSON_MASTER():
     ################################Lire les donnée de la cible##############################
 
     def lire_donnee(self):
+        print()
         if not self.verifier_current():
             print("Veuiller cibler une personne avant cette action")
             return
@@ -168,6 +169,7 @@ class JSON_MASTER():
             if self.current_json[caract] != "":
                 print(caract + " -> " + str(self.current_json[caract]))
         print()
+        self.wait()
 
     ##########################################################################################
     #################################Editer les donnée de la cible############################
@@ -208,7 +210,8 @@ class JSON_MASTER():
                         "Quelle est la nouvelle caractéristique a attibuer ? : ")
                     if self.current_json[choix2] != "":
                         choix3 = self.input_current(
-                            "Attention, la caractéristique " + self.current_json[choix2] + " va etre remplacer par " + Nouvelle_caract + " appuiller sur y pour valider : ")
+                            "Attention, la caractéristique {} {} {} va etre remplacer par {} {} {} \nAppuiller sur y pour valider (autre touche pour annuler) : ".format(
+                                bg(255, 150, 50), self.current_json[choix2], bg.rs, bg.cyan, Nouvelle_caract, bg.rs))
                         if choix3 == "y":
                             self.current_json[choix2] = Nouvelle_caract
                             self.print_current(
@@ -216,7 +219,6 @@ class JSON_MASTER():
                         else:
                             self.print_current("Abandon")
                     self.current_json[choix2] = Nouvelle_caract
-                    self.print_current("La caractéristique a été changée")
             elif choix == 2:
                 self.print_current("Creation de l'information")
                 choix = self.input_current(
@@ -250,6 +252,8 @@ class JSON_MASTER():
                 self.print_current("L'annecdote a été sauvegardée localement")
             else:
                 self.print_current("Désolé, la commande est inconnue")
+            if choix != 0 and choix != 2:
+                self.wait()
 
         if json_initial != self.current_json:
             self.print_current("Des modifications ont été effectuée : ")
@@ -260,13 +264,19 @@ class JSON_MASTER():
             print(json.dumps(self.current_json, sort_keys=True, indent=4))
             print()
             choix = self.input_current(
-                "Voulez vous sauvegarder ces modifications ? (y pour valider) : ")
+                "Voulez vous sauvegarder ces modifications ? (y pour valider / n pour refuser) : ")
+            while choix != "y" and choix != "n":
+                self.print_error("ce n'est pas un choix valide")
+                choix = self.input_current(
+                    "Voulez vous sauvegarder ces modifications ? (y pour valider / n pour refuser) : ")
             if choix == "y":
                 self.print_current(
                     "Les nouvelles donnée vont etre écrite dans le fichier...")
                 with open(self.current_json_path + "/data.json", "w", encoding="utf-8") as fichier:
                     json.dump(self.current_json, fichier, indent=4)
-                print("Le fichier a été mis a jours")
+                self.print_info("Le fichier a été mis à jours")
+            else:
+                self.print_info("le fichier n'a pas été mis à jours")
 
     ##########################################################################################
     ################################SUPPRIMER LES DONNEE######################################
@@ -296,17 +306,20 @@ class JSON_MASTER():
 
     def print_current(self, txt):
         if self.verifier_path():
-            print(fg.li_cyan + "[" + self.current_name + " " + self.current_familyname +
-                  "] " + fg.rs + "(" + self.current_path + ") " + txt)
+            print("[" + fg.red + self.current_name + " " + self.current_familyname + fg.rs +
+                  "] " + "(" + self.current_path + ") " + txt)
         else:
             if self.verifier_current():
-                print(fg.li_cyan + "[" + self.current_name + " " +
-                      self.current_familyname + "] " + fg.rs + txt)
+                print("[" + fg.red + self.current_name + " " +
+                      self.current_familyname + fg.rs + "] " + txt)
             else:
-                print(fg.li_cyan + "[Vide] " + fg.rs + txt)
+                print("[Vide] " + txt)
 
     def print_error(self, txt):
         print("\n" + fg.red + "Erreur : " + txt + fg.rs)
+
+    def print_info(self, txt):
+        print("\n" + bg.li_green + fg.black + "INFO : " + txt + fg.rs + bg.rs)
 
     def input_current(self, txt):
         if self.verifier_current():
