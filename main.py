@@ -15,7 +15,7 @@ class JSON_MASTER():
         self.current_familyname = ""
         self.current_path = ""
         self.phase = "alpha"
-        self.version = "0.0.3"
+        self.version = "0.0.4"
         self.dict_fonction = {
             1:"ajoute une nouvelle personne",
             2:"supprime cette personne",
