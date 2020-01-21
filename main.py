@@ -5,7 +5,7 @@ import os
 import json
 import shutil
 import copy
-
+from sty import fg, bg, ef, rs, RgbFg
 
 class JSON_MASTER():
     def __init__(self):
@@ -268,19 +268,19 @@ class JSON_MASTER():
 
     def print_current(self, txt):
         if self.verifier_path():
-            print("[" + self.current_name + " " + self.current_familyname +
-                  "] " + "(" + self.current_path + ") " + txt)
+            print(fg.li_cyan + "[" + self.current_name + " " + self.current_familyname +
+                  "] " + fg.rs + "(" + self.current_path + ") " + txt)
         else:
             if self.verifier_current():
-                print("[" + self.current_name + " " +
-                      self.current_familyname + "] " + txt)
+                print(fg.li_cyan + "[" + self.current_name + " " +
+                      self.current_familyname + "] " + fg.rs + txt)
             else:
-                print("[Vide] " + txt)
+                print(fg.li_cyan + "[Vide] " + fg.rs + txt)
 
     def input_current(self, txt):
         if self.verifier_current():
-            choix = input("[" + self.current_name + " " +
-                          self.current_familyname + "] " + txt)
+            choix = input("[" + fg.red +  self.current_name + " " +
+                          self.current_familyname + fg.rs + "] " + txt)
         else:
             choix = input("[Vide] " + txt)
         return choix
