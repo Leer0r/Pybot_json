@@ -5,11 +5,18 @@ import os
 import json
 import shutil
 import copy
-from sty import fg, bg, ef, rs, RgbFg
+from sty import fg, bg, ef, rs, RgbFg, Style
 
-
-class JSON_MASTER():
+class CUSTOM():
     def __init__(self):
+        fg.orange = Style(RgbFg(255, 150, 50))
+        self.couleur_help_crochet = fg.orange
+
+
+
+class JSON_MASTER(CUSTOM):
+    def __init__(self):
+        CUSTOM.__init__(self)
         self.current_json_path = ""
         self.current_json = ""
         self.current_name = ""
@@ -289,6 +296,8 @@ class JSON_MASTER():
             for fichier in os.listdir("data/"):
                 if fichier != "template.json":
                     shutil.rmtree("data/" + fichier)
+            self.current_familyname = ""
+            self.current_name = ""
             print("Les fichier on été supprimé")
     #########################################################################################
 
@@ -387,6 +396,19 @@ class MAIN(JSON_MASTER):
         JSON_MASTER.__init__(self)
         if not os.path.exists("data"):
             os.mkdir("data")
+        if not os.path.exists("data/template.json"):
+            with open("data/template.json","w") as template:
+                template.write("""{
+    "nom":"",
+    "prenom":"",
+    "age":"",
+    "interet":"",
+    "autre":"",
+    "anecdote":{
+        "nb":0
+    }
+}""")
+
 
     def lire_fichier(self, f):
         with open(f, "r") as fichier:
@@ -477,8 +499,7 @@ class MAIN(JSON_MASTER):
 
     def mainfonction(self):
         while(not self.arret):
-            print("\n[" + fg.da_green +
-                  "h pour avoir accès a la rubrique d'aide" + fg.rs + "]")
+            print("\n{}[{}{}h pour avoir accès a la rubrique d'aide{}{}]{}".format(self.couleur_help_crochet,fg.rs,fg.da_green,fg.rs,self.couleur_help_crochet,fg.rs))
             self.print_dict(self.dict_explication)
             try:
                 choix = self.input_current("Que voulez vous faire ? : ")
