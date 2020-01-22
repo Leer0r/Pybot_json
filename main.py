@@ -112,15 +112,16 @@ class JSON_MASTER():
         if len(os.listdir("data/")) == 2:
             liste = os.listdir("data/")
             liste.remove("template.json")
-            print(
-                "Il n'y a qu'un seul répertoire, celui de %s, ciblage immediat" % (liste[0]))
-            personne = liste[0].split("_")
-            self.current_familyname = personne[0]
-            self.current_name = personne[1]
-            self.current_json_path = "data/"+self.current_familyname + "_" + self.current_name
-            print("Le répertoire courrant est maintenant sur la personne nommée " +
-                  self.current_familyname + " " + self.current_name)
-            return
+            choix = self.input_current(
+                "Il n'y a qu'un seul répertoire, celui de %s \nVoulez vous le cibler ?(y pour valider) " % (liste[0]))
+            if choix == "y":
+                personne = liste[0].split("_")
+                self.current_familyname = personne[0]
+                self.current_name = personne[1]
+                self.current_json_path = "data/"+self.current_familyname + "_" + self.current_name
+                print("Le répertoire courrant est maintenant sur la personne nommée " +
+                    self.current_familyname + " " + self.current_name)
+                return
         print("Liste des dossiers : ", end="")
         self.afficher_dossier_data_general()
         tmp_current_familyname = input(
@@ -139,7 +140,7 @@ class JSON_MASTER():
                 "Quel est le prenom de la personne a définir comme reperoire courrant ? : ").lower()
             if not os.path.exists("data/" + tmp_current_familyname + "_" + tmp_current_name):
                 choix = self.input_current(
-                    "La personne n'a pas de dossier, voulez vous en créer un ? : (y pour valider)")
+                    "La personne n'a pas de dossier, voulez vous en créer un ? : (y pour valider) ")
                 if choix == "y":
                     self.current_name = tmp_current_name
                     self.current_familyname = tmp_current_familyname
