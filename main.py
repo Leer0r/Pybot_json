@@ -10,8 +10,33 @@ from sty import fg, bg, ef, rs, RgbFg, Style
 class CUSTOM():
     def __init__(self):
         fg.orange = Style(RgbFg(255, 150, 50))
-        self.couleur_help_crochet = fg.orange
 
+        #######Help_Crochet###########
+        self.couleur_help_crochet = fg.orange
+        self.bg_help_crochet = ""
+        self.end_couleur_help_crochet = fg.rs
+        self.end_bg_help_crochet = ""
+
+        ########Help_Crochet##########
+        self.couleur_help = fg.da_green
+        self.bg_help = ""
+        self.end_couleur_help = fg.rs
+        self.end_bg_help = ""
+
+        ########Error#################
+        self.couleur_error = fg.red
+        self.bg_error = ""
+        self.end_couleur_error = fg.rs
+        self.end_bg_error = ""
+
+        ########Info##################
+        self.couleur_info = ""
+        self.bg_info = bg.li_green
+        self.end_couleur_info = ""
+        self.end_bg_info = bg.rs
+
+    def personalisation(self):
+        pass
 
 
 class JSON_MASTER(CUSTOM):
@@ -31,6 +56,7 @@ class JSON_MASTER(CUSTOM):
             4: "donne moi les informations",
             5: "édite les informations",
             6: "supprime toutes les données",
+            7: "personalise l'interface",
             "h": "h",
             "stop": "stop"
         }
@@ -41,6 +67,7 @@ class JSON_MASTER(CUSTOM):
             4: "Donne les informations stocké de la personne précédement ciblée",
             5: "Edite les informations stocké de la personne précédement ciblée",
             6: "Supprime toutes les données stockées",
+            7: "Personnalisation de l'interface"
             "stop": "Arrete le programme"
         }
 
@@ -233,7 +260,7 @@ class JSON_MASTER(CUSTOM):
                                 "Attention, la caractéristique {} {} {} va etre remplacer par {} {} {} \nAppuiller sur y pour valider (autre touche pour annuler) : ".format(
                                     bg(255, 150, 50), self.current_json[choix2], bg.rs, bg.cyan, nouv_caract, bg.rs))
                             if choix3 == "y":
-                                self.current_json[choix2] = Nouvelle_caract
+                                self.current_json[choix2] = nouv_caract
                                 self.print_current(
                                     "La caractéristique a été changée")
                             else:
@@ -349,10 +376,10 @@ class JSON_MASTER(CUSTOM):
                 print("[Vide] " + txt)
 
     def print_error(self, txt):
-        print("\n" + fg.red + "Erreur : " + txt + fg.rs)
+        print("\n {}{}Erreur : {}{}{}".format(self.bg_error,self.couleur_error,txt,self.end_couleur_error,self.end_bg_error))
 
     def print_info(self, txt):
-        print("\n" + bg.li_green + fg.black + "INFO : " + txt + fg.rs + bg.rs)
+        print("\n{}{}INFO : {}{}{}".format(self.bg_info,self.couleur_help,txt,self.end_couleur_info,self.end_bg_info))
 
     def input_current(self, txt):
         if self.verifier_current():
@@ -517,12 +544,14 @@ class MAIN(JSON_MASTER):
             self.editer_donnee()
         elif str_decision == "supprime toutes les données":
             self.suppr_all()
+        elif str_decision == "personalise l'interface":
+            self.personalisation()
         else:
             print("Désolé, je ne connais pas cette fonction....")
 
     def mainfonction(self):
         while(not self.arret):
-            print("\n{}[{}{}h pour avoir accès a la rubrique d'aide{}{}]{}".format(self.couleur_help_crochet,fg.rs,fg.da_green,fg.rs,self.couleur_help_crochet,fg.rs))
+            print("\n{}{}[{}{}{}{}h pour avoir accès a la rubrique d'aide{}{}{}{}]{}{}".format(self.bg_help_crochet,self.couleur_help_crochet,self.end_couleur_help_crochet,self.end_bg_help_crochet,self.bg_help,self.couleur_help,self.end_couleur_help,self.end_bg_help,self.bg_help_crochet,self.couleur_help_crochet,self.end_couleur_help_crochet,self.end_bg_help_crochet))
             self.print_dict(self.dict_explication)
             try:
                 choix = self.input_current("Que voulez vous faire ? : ")
