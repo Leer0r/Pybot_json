@@ -23,7 +23,7 @@ class JSON_MASTER(CUSTOM):
         self.current_familyname = ""
         self.current_path = ""
         self.phase = "alpha"
-        self.version = "0.0.5"
+        self.version = "0.0.6"
         self.dict_fonction = {
             1: "ajoute une nouvelle personne",
             2: "supprime cette personne",
@@ -126,6 +126,9 @@ class JSON_MASTER(CUSTOM):
                 self.current_familyname = personne[0]
                 self.current_name = personne[1]
                 self.current_json_path = "data/"+self.current_familyname + "_" + self.current_name
+                with open(self.current_json_path+"/data.json", "r") as fichier:
+                    self.current_json = json.load(fichier)
+                print("Les donnée ont bien été chargée \n")
                 print("Le répertoire courrant est maintenant sur la personne nommée " +
                     self.current_familyname + " " + self.current_name)
                 return
@@ -214,19 +217,39 @@ class JSON_MASTER(CUSTOM):
                     self.print_current(
                         "Désolé, je ne trouve pas cette caractéristique")
                 else:
-                    Nouvelle_caract = self.input_current(
-                        "Quelle est la nouvelle caractéristique a attibuer ? : ")
-                    if self.current_json[choix2] != "":
-                        choix3 = self.input_current(
-                            "Attention, la caractéristique {} {} {} va etre remplacer par {} {} {} \nAppuiller sur y pour valider (autre touche pour annuler) : ".format(
-                                bg(255, 150, 50), self.current_json[choix2], bg.rs, bg.cyan, Nouvelle_caract, bg.rs))
-                        if choix3 == "y":
-                            self.current_json[choix2] = Nouvelle_caract
-                            self.print_current(
-                                "La caractéristique a été changée")
-                        else:
-                            self.print_current("Abandon")
-                    self.current_json[choix2] = Nouvelle_caract
+                    if self.current_json[choix2] == "":
+                        Nouvelle_caract = self.input_current(
+                            "Quelle est la nouvelle caractéristique a attibuer ? : ")
+                        self.current_json[choix2] = Nouvelle_caract
+                    else:
+                        choix = self.input_current("L'élément {} a déjà la caractéristique {}, voulez vous la remplacer ou la completer ? (r/c) : ".format(choix2,self.current_json[choix2]))
+                        while(choix != "c" and choix != "r"):
+                            self.print_error("ce n'est pas une réponse valide")
+                            choix = self.input_current("L'élément {} a déjà la caractéristique {}, voulez vous la remplacer ou la completer ? (r/c) : ".format(choix2,self.current_json[choix2]))
+                        if choix == "r":
+                            nouv_caract = self.input_current(
+                                "Quelle est la nouvelle caractéristique a attibuer ? : ")
+                            choix3 = self.input_current(
+                                "Attention, la caractéristique {} {} {} va etre remplacer par {} {} {} \nAppuiller sur y pour valider (autre touche pour annuler) : ".format(
+                                    bg(255, 150, 50), self.current_json[choix2], bg.rs, bg.cyan, nouv_caract, bg.rs))
+                            if choix3 == "y":
+                                self.current_json[choix2] = Nouvelle_caract
+                                self.print_current(
+                                    "La caractéristique a été changée")
+                            else:
+                                self.print_current("Abandon")
+                        else : 
+                            add_caract = self.input_current(
+                                "Quelle est la caractéristique à ajouter ? : ")
+                            choix3 = self.input_current(
+                                "Attention, la caractéristique {} {} {} va etre remplacer par {} {} {} \nAppuiller sur y pour valider (autre touche pour annuler) : ".format(
+                                    bg(255, 150, 50), self.current_json[choix2], bg.rs, bg.cyan, self.current_json[choix2] + ", " + add_caract, bg.rs))
+                            if choix3 == "y":
+                                self.current_json[choix2] = self.current_json[choix2] + ", " + add_caract
+                                self.print_current(
+                                    "La caractéristique a été changée")
+                            else:
+                                self.print_current("Abandon")
             elif choix == 2:
                 self.print_current("Creation de l'information")
                 choix = self.input_current(
