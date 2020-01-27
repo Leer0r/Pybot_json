@@ -1,0 +1,14 @@
+{
+    "Help_Crochet": {
+    "couleur_help_crochet": "fg.orange",
+    "bg_help_crochet": "",
+    "end_couleur_help_crochet": "fg.rs",
+    "end_bg_help_crochet": ""
+    },
+    "Help": {
+    "couleur_help": "fg.da_green",
+    "bg_help": "",
+    "end_couleur_help":"fg.rs",
+    "end_bg_help":""
+    }
+}

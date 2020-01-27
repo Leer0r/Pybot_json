@@ -17,7 +17,7 @@ class CUSTOM():
         self.end_couleur_help_crochet = fg.rs
         self.end_bg_help_crochet = ""
 
-        ########Help_Crochet##########
+        ########Help##################
         self.couleur_help = fg.da_green
         self.bg_help = ""
         self.end_couleur_help = fg.rs
@@ -67,7 +67,7 @@ class JSON_MASTER(CUSTOM):
             4: "Donne les informations stocké de la personne précédement ciblée",
             5: "Edite les informations stocké de la personne précédement ciblée",
             6: "Supprime toutes les données stockées",
-            7: "Personnalisation de l'interface"
+            7: "Personnalisation de l'interface",
             "stop": "Arrete le programme"
         }
 
