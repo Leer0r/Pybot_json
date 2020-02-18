@@ -36,7 +36,8 @@ class CUSTOM():
         self.end_bg_info = bg.rs
 
     def personalisation(self):
-        pass
+        print("En construction\n")
+        
 
 
 class JSON_MASTER(CUSTOM):
@@ -282,7 +283,7 @@ class JSON_MASTER(CUSTOM):
                 choix = self.input_current(
                     "Quel est le nom de la catégorie a créer ? : ")
                 choix2 = self.input_current(
-                    "Que voulez vous mettre dans cette catégorie ? : ")
+                    "Que voulez vous mettre dans cette catégorie ? ")
                 self.current_json.update({choix: choix2})
             elif choix == 3:
                 self.print_current("Suppression de l'information")
@@ -465,50 +466,48 @@ class MAIN(JSON_MASTER):
             fichier_str = fichier.read()
         return fichier_str
 
-    def split_str(self, txt):
-        dict_option = {}
-        compt = 1
-        for i in range(len(txt)):
-            if txt[i] == "@":
-                param = ""
-                arg = ""
-                # On prend le paramètre
-                while txt[i] != " " and txt[i] != "\n":
-                    param += txt[i]
-                    i += 1
-                if "@begin:" in param:
-                    param = param.replace("@begin:", "")
-                    save_param = param
-                    while txt[i] != "@":
-                        arg += txt[i]
-                        i += 1
-                    dict_option[param] = arg
-                    param = ""
-                    while i < len(txt) and txt[i] != " " and txt[i] != "\n":
-                        param += txt[i]
-                        i += 1
-                    if "@end:" + save_param not in param:
-                        print("Attention, la balise d'entrée se nome {} alors que la balise de sortie de somme {}, veuiller corriger ce problème".format(
-                            save_param, param))
-                elif "@end:" in param:
-                    continue
-                else:
-                    i += 3
-                    while i < len(txt) and txt[i] != "\n":
-                        arg += txt[i]
-                        i += 1
-                    if "|" in arg:
-                        arg = arg.split("|")
-                    dict_option[param.replace('@', '')] = arg
-                compt += 1
-        return dict_option
+    def get_line(self,str_file:str) :
+        str_return = ""
+        for i in str_file : 
+            if(i == "\n"):
+                return (str_return,str_file.split(i,1)[1])
+            str_return += i
+            str_file = str_file.split(i,1)[1]
+        return (str_return,"")
+
+    def get_div(self,str_div:str,name_div:str):
+        str_full = str_div
+        stop_point = "@end:"+name_div
+        str_return = ""
+        current_line,str_full = self.get_line(str_full)
+        while(current_line != stop_point):
+            str_return += current_line + "\n"
+            current_line,str_full = self.get_line(str_full)
+        return (str_return,str_full)
+
+
+    def split_str(self,str_file:str) -> str:
+        str_return = ""
+        str_fichier = str_file
+        dico = {}
+        str_temp = ""
+        while(str_fichier != "") : 
+            str_return, str_fichier = self.get_line(str_fichier)
+            if "@begin" in str_return:
+                nom = str_return.replace("@begin:","")
+                str_return,str_fichier = self.get_div(str_fichier,nom)
+                dico[nom] = str_return
+            elif str_return != "":
+                split_return = str_return.split("=")
+                dico[split_return[0].replace("@","")] = split_return[1]
+        return dico
 
     def aide(self):
         print("Voici comment utiliser les fonctions : ")
 
     def print_dict(self, dico):
         for key in dico:
-            print(str(key) + " --> " + dico[key])
+            print(str(key) + " --> " + str(dico[key]))
 
     def aide_plus(self):
         os.system("clear")
@@ -527,8 +526,7 @@ class MAIN(JSON_MASTER):
             return
         txt_aide = self.lire_fichier("help/" + choix + ".help")
         dict_option = self.split_str(txt_aide)
-        for key in dict_option:
-            print(key + " -> " + str(dict_option[key]) + "\n")
+        self.print_dict(dict_option)
         self.wait()
 
     def decision(self, str_decision):
@@ -566,8 +564,8 @@ class MAIN(JSON_MASTER):
                 self.print_error("ce n'est pas un indice valide de fonction")
             except ValueError:
                 self.print_error("le nombre entré n'est pas valide")
-            except:
-                self.print_error("Abandon. Retour au menu")
+            except :
+                self.print_error("retour au menu")
         print(ef.b + "Au revoir" + rs.bold_dim)
 
 ########################################################################################################################################
