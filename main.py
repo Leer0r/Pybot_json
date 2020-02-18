@@ -493,7 +493,7 @@ class MAIN(JSON_MASTER):
         str_temp = ""
         while(str_fichier != "") : 
             str_return, str_fichier = self.get_line(str_fichier)
-            if "@begin" in str_return:
+            if "@begin:" in str_return:
                 nom = str_return.replace("@begin:","")
                 str_return,str_fichier = self.get_div(str_fichier,nom)
                 dico[nom] = str_return
@@ -564,8 +564,7 @@ class MAIN(JSON_MASTER):
                 self.print_error("ce n'est pas un indice valide de fonction")
             except ValueError:
                 self.print_error("le nombre entré n'est pas valide")
-            except :
-                self.print_error("retour au menu")
+            
         print(ef.b + "Au revoir" + rs.bold_dim)
 
 ########################################################################################################################################
