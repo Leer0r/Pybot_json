@@ -502,28 +502,30 @@ class MAIN(JSON_MASTER):
                 dico[split_return[0].replace("@","")] = split_return[1]
         return dico
 
-    def aide(self):
-        print("Voici comment utiliser les fonctions : ")
-
     def print_dict(self, dico):
         for key in dico:
             print(str(key) + " --> " + str(dico[key]))
 
     def aide_plus(self):
         os.system("clear")
-        print("Voici la liste des fonctions qui possède un fichier aide : ")
+        print("Voici la liste des fonctions qui possède un fichier aide, tapez le numéro correspondant pour obtenir le fichier d'aide : ")
         liste_choix = []
+        compt = 1
+        liste_compt = []
         for fichier in os.listdir("help/"):
-            print(fg.da_green + fichier.replace(".help", "") + fg.rs)
+            print(fg.da_green + str(compt) + " : " + fichier.replace(".help", "") + fg.rs)
             liste_choix.append(fichier.replace(".help", ""))
+            liste_compt.append(str(compt))
+            compt += 1
         choix = self.input_current(
             "Quel est la fonction qui nécéssite de l'aide ? [q pour quitter] : ")
-        while choix not in liste_choix and choix != "q":
+        while choix not in liste_compt and choix != "q":
             print("Désolé, cette fonction n'existe pas...")
             choix = self.input_current(
                 "Quel est la fonction qui nécéssite de l'aide ? [q pour quitter] : ")
         if choix == "q":
             return
+        choix = liste_choix[int(choix) - 1]
         txt_aide = self.lire_fichier("help/" + choix + ".help")
         dict_option = self.split_str(txt_aide)
         self.print_dict(dict_option)
@@ -563,7 +565,7 @@ class MAIN(JSON_MASTER):
             except KeyError:
                 self.print_error("ce n'est pas un indice valide de fonction")
             except ValueError:
-                self.print_error("le nombre entré n'est pas valide")
+                self.print_error("le paramètre entré n'est pas valide")
             
         print(ef.b + "Au revoir" + rs.bold_dim)
 
